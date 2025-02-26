@@ -13,6 +13,21 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
+Route::get('/', function (\Illuminate\Http\Request $request) {
+
+    $params = $request->all();
+
+    return view('home')->with('error',$params['error'] ?? '');
+
     return view('welcome');
+})->name('home');
+
+Route::post('/login', function (\Illuminate\Http\Request $request){
+    $request->session()->put('username', $request->input('username'));
+    $request->session()->put('password', $request->input('password'));
+    return redirect('/dev');
 });
+
+Route::get('/dev', function (){
+
+})->middleware([\App\Http\Middleware\UserCheck::class]);
