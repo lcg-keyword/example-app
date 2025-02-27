@@ -16,7 +16,7 @@ return new class extends Migration
             $table->string('user');
             $table->timestamps();
             $table->string('sql');
-            $table->string('error');
+            $table->text('error')->nullable();
         });
     }
 

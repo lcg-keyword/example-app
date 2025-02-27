@@ -19,7 +19,7 @@ class UserCheck
         $username = $request->session()->get('username');
         $password = $request->session()->get('password');
 
-        if ('123' != $password) return redirect()->route('home',['error' => 'Incorrect password']);
+        if ('admin' != $password) return redirect()->route('home',['error' => 'Incorrect password']);
         if ('admin' != $username) return redirect()->route('home',['error' => 'The page is not accessible to regular users']);
 
         return $next($request);

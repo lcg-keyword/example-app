@@ -28,6 +28,13 @@ Route::post('/login', function (\Illuminate\Http\Request $request){
     return redirect('/dev');
 });
 
-Route::get('/dev', function (){
+Route::group([],function (){
+    Route::get('/dev', function (){
 
-})->middleware([\App\Http\Middleware\UserCheck::class]);
+        return view('operate');
+
+    })->middleware([\App\Http\Middleware\UserCheck::class]);
+
+    Route::get('/execute', [\App\Http\Controllers\Controller::class,'execute'])->middleware([\App\Http\Middleware\UserCheck::class]);
+});
+
