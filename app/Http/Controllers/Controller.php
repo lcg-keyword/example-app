@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Services\ExecuteService;
+use App\Services\ExportService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
@@ -12,16 +13,29 @@ class Controller extends BaseController
 {
     use AuthorizesRequests, ValidatesRequests;
 
-    public function __construct(private ExecuteService $service)
+    public function __construct(
+        private ExecuteService $service,
+        private ExportService $exportService
+    )
     {
     }
 
     public function execute(Request $request)
     {
 
-//        return response()->json($this->service->execute($request->all(), $request->session()->get('username')));
         $logs = $this->service->execute($request->all(), $request->session()->get('username'));
 
         return view('operate',['logs' => $logs]);
+    }
+
+    public function exportExcel(Request $request)
+    {
+        $result = $this->service->getExport($request->all(), $request->session()->get('username'));
+
+        if (is_string($result)) return view('operate',['logs' => $result]);
+
+        $this->exportService->export($result['header'], $result['data']);
+
+        return response('');
     }
 }

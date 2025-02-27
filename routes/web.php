@@ -36,5 +36,10 @@ Route::group([],function (){
     })->middleware([\App\Http\Middleware\UserCheck::class]);
 
     Route::get('/execute', [\App\Http\Controllers\Controller::class,'execute'])->middleware([\App\Http\Middleware\UserCheck::class]);
+
+    Route::get('/export/excel', [\App\Http\Controllers\Controller::class,'exportExcel'])->name('export.excel')->middleware([\App\Http\Middleware\UserCheck::class]);
+
+    Route::get('/export/json', [\App\Http\Controllers\Controller::class,'exportJson'])->name('export.json')->middleware([\App\Http\Middleware\UserCheck::class]);
+
 });
 

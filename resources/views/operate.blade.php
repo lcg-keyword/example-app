@@ -8,14 +8,18 @@
 </head>
 <body>
 <div class="container mt-5">
+
     <form action="{{ url('execute') }}" method="get">
         @csrf
         <div class="input-group mb-3">
-            <input type="text" class="form-control" name="keyword" placeholder="input SQL"
+            <input id="textInput" type="text" class="form-control" name="keyword" placeholder="input SQL"
                    value="{{ $keyword ?? '' }}">
-            <button class="btn btn-primary" type="submit">search</button>
-{{--            <button class="btn btn-primary" type="submit">export excel</button>--}}
-{{--            <button class="btn btn-primary" type="submit">export json</button>--}}
+            <div>
+                <button class="btn btn-primary" type="submit">search</button>
+                <button class="btn btn-primary" id="export-excel">export excel</button>
+                <button class="btn btn-primary" id="export-json">export json</button>
+            </div>
+
         </div>
     </form>
 
@@ -27,7 +31,7 @@
                     <th>ID</th>
                     <th>user</th>
                     <th>error</th>
-                    <th>create time</th>
+                    <th>create-time</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -48,5 +52,21 @@
     @endif
 </div>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        $('#export-excel').on('click', function(e) {
+            e.preventDefault();
+            // 调用接口进行数据导出
+            param = $('#textInput').val();
+            window.location.href = "{{ route('export.excel') }}"+'?keyword='+param;
+        });
+        $('#export-json').on('click', function(e) {
+            e.preventDefault();
+            // 调用接口进行数据导出
+            window.location.href = "{{ route('export.json') }}";
+        });
+    });
+</script>
 </body>
 </html>
