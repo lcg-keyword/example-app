@@ -63,8 +63,8 @@
         });
         $('#export-json').on('click', function(e) {
             e.preventDefault();
-            // 调用接口进行数据导出
-            window.location.href = "{{ route('export.json') }}";
+            param = $('#textInput').val();
+            window.location.href = "{{ route('export.json') }}"+'?keyword='+param;
         });
     });
 </script>

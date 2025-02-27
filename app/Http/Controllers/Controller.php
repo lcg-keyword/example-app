@@ -38,4 +38,19 @@ class Controller extends BaseController
 
         return response('');
     }
+
+    public function exportJson(Request $request)
+    {
+        $result = $this->service->execute($request->all(), $request->session()->get('username'));
+
+        if (is_string($result)) return view('operate',['logs' => $result]);
+
+        $jsonContent = json_encode($result, JSON_PRETTY_PRINT);
+
+        return response()->streamDownload(function () use ($jsonContent) {
+            echo $jsonContent;
+        }, 'sql_logs.json', [
+            'Content-Type' => 'application/json'
+        ]);
+    }
 }
