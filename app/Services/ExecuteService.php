@@ -23,8 +23,10 @@ class ExecuteService
         if (!str_starts_with($select_sql, 'select ')) return 'invalid sql';
 
         try {
-            $data = DB::select($select_sql);
-        }catch (QueryException $exception) {
+
+            DB::connection()->getPdo()->prepare($select_sql);
+
+        }catch (Exception $exception) {
 
             $model = new SqlExecutionLogs();
             $model->user = $user;
@@ -37,7 +39,7 @@ class ExecuteService
             return $exception->getMessage();
         }
 
-        return collect($data ?? []);
+        return collect(DB::select($select_sql));
 
     }
 
