@@ -20,6 +20,7 @@ class ExecuteService
         $select_sql = Arr::get($params, 'keyword');
 
         if (empty($select_sql)) return '';
+        if (!str_starts_with($select_sql, 'select ')) return 'invalid sql';
 
         try {
             $data = DB::select($select_sql);

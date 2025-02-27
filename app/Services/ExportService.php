@@ -5,14 +5,11 @@ namespace App\Services;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ExportService
 {
 
     public function export($header, $data, $type = true, $filename = null){
-
-        $fileName = !empty($filename) ? date('YmdHis').urlencode($filename) :  date('Ymdhis',time());
 
         // 创建一个新的 Spreadsheet 对象
         $spreadsheet = new Spreadsheet();
@@ -38,10 +35,8 @@ class ExportService
         // 设置下载与后缀
         if ($type) {
             $type = "Xlsx";
-            $suffix = "xlsx";
         } else {
             $type = "Xlsx";
-            $suffix = "xls";
         }
 
         // 设置响应头
