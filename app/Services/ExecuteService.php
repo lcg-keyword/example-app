@@ -12,14 +12,10 @@ use Illuminate\Support\Facades\DB;
 class ExecuteService
 {
 
-    /**
-     * @throws Exception
-     */
-    public function execute(array $params, string $user): Collection | string
+    public function prepareCheck(string $select_sql, string $user): string
     {
-        $select_sql = Arr::get($params, 'keyword');
-
         if (empty($select_sql)) return '';
+
         if (!str_starts_with($select_sql, 'select ')) return 'invalid sql';
 
         try {
@@ -39,8 +35,17 @@ class ExecuteService
             return $exception->getMessage();
         }
 
-        return collect(DB::select($select_sql));
+        return '';
+    }
 
+    /**
+     * @throws Exception
+     */
+    public function execute(array $params, string $user): Collection | string
+    {
+        if ($msg = $this->prepareCheck($params['keyword'] ?? '', $user)) return $msg;
+
+        return SqlExecutionLogs::query()->forPage($params['page'] ?? 1,10)->get();
     }
 
     function getSheetHeader(): array
@@ -64,14 +69,13 @@ class ExecuteService
     /**
      * @throws Exception
      */
-    public function getExport(array $params, string $user): array | string
+    public function getExport(string $select_sql, string $user): array | string
     {
-        $result = $this->execute($params, $user);
-        if (is_string($result)) return $result;
+        if ($msg = $this->prepareCheck($select_sql, $user)) return $msg;
 
         return [
             'header' => $this->getSheetHeader(),
-            'data' => $result->map(fn($item) => [
+            'data' => SqlExecutionLogs::query()->get()->map(fn($item) => [
                 'id' => $item->id,
                 'user' => $item->user,
                 'sql' => $item->sql,

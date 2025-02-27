@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\SqlExecutionLogs;
 use App\Services\ExecuteService;
 use App\Services\ExportService;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
@@ -23,14 +24,20 @@ class Controller extends BaseController
     public function execute(Request $request)
     {
 
-        $logs = $this->service->execute($request->all(), $request->session()->get('username'));
+        $params = $request->all();
 
-        return view('operate',['logs' => $logs]);
+        $logs = $this->service->execute($params, $request->session()->get('username'));
+
+        $pagers = SqlExecutionLogs::query()->paginate(10);
+
+        return view('operate',['logs' => $logs,'pagers' => $pagers]);
     }
 
     public function exportExcel(Request $request)
     {
-        $result = $this->service->getExport($request->all(), $request->session()->get('username'));
+        $select_sql = $request->input('keyword','');
+
+        $result = $this->service->getExport($select_sql, $request->session()->get('username'));
 
         if (is_string($result)) return view('operate',['logs' => $result]);
 
@@ -41,9 +48,11 @@ class Controller extends BaseController
 
     public function exportJson(Request $request)
     {
-        $result = $this->service->execute($request->all(), $request->session()->get('username'));
+        $select_sql = $request->input('keyword','');
 
-        if (is_string($result)) return view('operate',['logs' => $result]);
+        $result = $this->service->prepareCheck($select_sql, $request->session()->get('username'));
+
+        if ($result) return view('operate',['logs' => $result]);
 
         $jsonContent = json_encode($result, JSON_PRETTY_PRINT);
 
