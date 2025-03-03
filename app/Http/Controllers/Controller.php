@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\SqlExecutionLogs;
 use App\Services\ExecuteService;
 use App\Services\ExportService;
+use App\Validators\SqlValidator;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
@@ -16,7 +17,8 @@ class Controller extends BaseController
 
     public function __construct(
         private ExecuteService $service,
-        private ExportService  $exportService
+        private ExportService  $exportService,
+        private SqlValidator $sqlValidator
     )
     {
     }
@@ -26,22 +28,31 @@ class Controller extends BaseController
 
         $params = $request->all();
 
-        $logs = $this->service->execute($params['keyword'] ?? '', $params['page'] ?? 1, $request->session()->get('username'));
+        if ($msg = $this->sqlValidator->validateSelectSql($params['keyword'] ?? '')) {
+            $this->service->addLog($params['keyword'] ?? '', $msg, $request->session()->get('username'));
+        }else {
+            $logs = $this->service->execute($params['keyword'] ?? '', $params['page'] ?? 1);
+        }
 
-        $pagers = SqlExecutionLogs::query()->paginate(10);
-
-        return view('operate', ['logs' => $logs, 'pagers' => $pagers, 'keyword' => $params['keyword'] ?? '']);
+        return view('operate', [
+            'logs' => $logs ?? $msg,
+            'pagers' => SqlExecutionLogs::query()->paginate(10),
+            'keyword' => $params['keyword'] ?? ''
+        ]);
     }
 
     public function exportExcel(Request $request)
     {
         $params = $request->all();
 
-        $result = $this->service->getExport($params['keyword'] ?? '', $request->session()->get('username'));
+        if ($msg = $this->sqlValidator->validateSelectSql($params['keyword'] ?? '')) {
+            $this->service->addLog($params['keyword'] ?? '', $msg, $request->session()->get('username'));
+            return view('operate', ['logs' => $msg]);
+        }
 
-        if (is_string($result)) return view('operate', ['logs' => $result]);
+        [$header, $data] = $this->service->getExport($params['keyword'] ?? '');
 
-        $this->exportService->export($result['header'], $result['data']);
+        $this->exportService->export($header, $data);
 
         return response('');
     }
@@ -50,9 +61,12 @@ class Controller extends BaseController
     {
         $params = $request->all();
 
-        $result = $this->service->exportJson($params['keyword'] ?? '', $request->session()->get('username'));
+        if ($msg = $this->sqlValidator->validateSelectSql($params['keyword'] ?? '')) {
+            $this->service->addLog($params['keyword'] ?? '', $msg, $request->session()->get('username'));
+            return view('operate', ['logs' => $msg]);
+        }
 
-        if (is_string($result)) return view('operate', ['logs' => $result]);
+        $result = $this->service->exportJson($params['keyword'] ?? '');
 
         return response()->streamDownload(function () use ($result) {
             echo json_encode($result, JSON_PRETTY_PRINT);
