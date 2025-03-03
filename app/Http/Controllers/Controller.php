@@ -18,7 +18,7 @@ class Controller extends BaseController
     public function __construct(
         private ExecuteService $service,
         private ExportService  $exportService,
-        private SqlValidator $sqlValidator
+        private SqlValidator   $sqlValidator
     )
     {
     }
@@ -30,7 +30,7 @@ class Controller extends BaseController
 
         if ($msg = $this->sqlValidator->validateSelectSql($params['keyword'] ?? '')) {
             $this->service->addLog($params['keyword'] ?? '', $msg, $request->session()->get('username'));
-        }else {
+        } else {
             $logs = $this->service->execute($params['keyword'] ?? '', $params['page'] ?? 1);
         }
 
