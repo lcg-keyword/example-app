@@ -12,7 +12,7 @@ class ExecuteService
 
     public function prepareCheck(string $select_sql, string $user): string
     {
-        if (!str_starts_with($select_sql, 'select ')) return 'invalid sql';
+        if (!str_starts_with($select_sql, 'select ')) return 'Only SELECT is allowed';
 
         try {
 
