@@ -26,18 +26,18 @@ class Controller extends BaseController
 
         $params = $request->all();
 
-        $logs = $this->service->execute($params, $request->session()->get('username'));
+        $logs = $this->service->execute($params['keyword'] ?? '', $params['page'] ?? 1, $request->session()->get('username'));
 
         $pagers = SqlExecutionLogs::query()->paginate(10);
 
-        return view('operate', ['logs' => $logs, 'pagers' => $pagers]);
+        return view('operate', ['logs' => $logs, 'pagers' => $pagers, 'keyword' => $params['keyword'] ?? '']);
     }
 
     public function exportExcel(Request $request)
     {
-        $select_sql = $request->input('keyword', '');
+        $params = $request->all();
 
-        $result = $this->service->getExport($select_sql, $request->session()->get('username'));
+        $result = $this->service->getExport($params['keyword'] ?? '', $request->session()->get('username'));
 
         if (is_string($result)) return view('operate', ['logs' => $result]);
 
@@ -48,16 +48,14 @@ class Controller extends BaseController
 
     public function exportJson(Request $request)
     {
-        $select_sql = $request->input('keyword', '');
+        $params = $request->all();
 
-        $result = $this->service->prepareCheck($select_sql, $request->session()->get('username'));
+        $result = $this->service->exportJson($params['keyword'] ?? '', $request->session()->get('username'));
 
-        if ($result) return view('operate', ['logs' => $result]);
+        if (is_string($result)) return view('operate', ['logs' => $result]);
 
-        $jsonContent = json_encode($result, JSON_PRETTY_PRINT);
-
-        return response()->streamDownload(function () use ($jsonContent) {
-            echo $jsonContent;
+        return response()->streamDownload(function () use ($result) {
+            echo json_encode($result, JSON_PRETTY_PRINT);
         }, 'sql_logs.json', [
             'Content-Type' => 'application/json'
         ]);

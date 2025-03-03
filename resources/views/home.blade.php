@@ -29,7 +29,7 @@
         }
 
         .login-container input {
-            width: 100%;
+            width: 93%;
             padding: 10px;
             margin-bottom: 15px;
             border: 1px solid #ccc;

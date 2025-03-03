@@ -10,11 +10,8 @@ use Illuminate\Support\Facades\DB;
 class ExecuteService
 {
 
-
     public function prepareCheck(string $select_sql, string $user): string
     {
-        if (empty($select_sql)) return '';
-
         if (!str_starts_with($select_sql, 'select ')) return 'invalid sql';
 
         try {
@@ -40,11 +37,11 @@ class ExecuteService
     /**
      * @throws Exception
      */
-    public function execute(array $params, string $user): Collection|string
+    public function execute(string $select_sql, int $page, string $user): Collection|string
     {
-        if ($msg = $this->prepareCheck($params['keyword'] ?? '', $user)) return $msg;
+        if ($msg = $this->prepareCheck($select_sql, $user)) return $msg;
 
-        return SqlExecutionLogs::query()->forPage($params['page'] ?? 1, 10)->get();
+        return collect(DB::select($select_sql))->forPage($page, 10);
     }
 
     function getSheetHeader(): array
@@ -74,7 +71,7 @@ class ExecuteService
 
         return [
             'header' => $this->getSheetHeader(),
-            'data' => SqlExecutionLogs::query()->get()->map(fn($item) => [
+            'data' => collect(DB::select($select_sql))->map(fn($item) => [
                 'id' => $item->id,
                 'user' => $item->user,
                 'sql' => $item->sql,
@@ -82,5 +79,12 @@ class ExecuteService
                 'create_time' => $item->created_at,
             ])->toArray(),
         ];
+    }
+
+    public function exportJson(string $select_sql, string $user): Collection|string
+    {
+        if ($msg = $this->prepareCheck($select_sql, $user)) return $msg;
+
+        return collect(DB::select($select_sql));
     }
 }

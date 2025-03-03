@@ -53,17 +53,17 @@
                 @if ($pagers->onFirstPage())
                     <li class="disabled"><span>&laquo; 上一页</span></li>
                 @else
-                    <li><a href="{{ $pagers->previousPageUrl() }}">&laquo; 上一页</a></li>
+                    <li><a href="{{ $pagers->previousPageUrl().'&keyword='.$keyword }}">&laquo; 上一页</a></li>
                 @endif
 
                 @for ($i = 1; $i <= $pagers->lastPage(); $i++)
                     <li class="{{ ($pagers->currentPage() == $i) ? ' active' : '' }}">
-                        <a href="{{ $pagers->url($i) }}">{{ $i }}</a>
+                        <a href="{{ $pagers->url($i).'&keyword='.$keyword }}">{{ $i }}</a>
                     </li>
                 @endfor
 
                 @if ($pagers->hasMorePages())
-                    <li><a href="{{ $pagers->nextPageUrl() }}">下一页 &raquo;</a></li>
+                    <li><a href="{{ $pagers->nextPageUrl().'&keyword='.$keyword }}">下一页 &raquo;</a></li>
                 @else
                     <li class="disabled"><span>下一页 &raquo;</span></li>
                 @endif
