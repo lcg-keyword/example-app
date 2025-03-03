@@ -5,52 +5,54 @@ namespace App\Services;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ExportService
 {
 
-    public function export($header, $data, $type = true, $filename = null)
+    private $spreadsheet;
+    private $sheet;
+    private $fileName;
+
+    public function __construct($fileName = 'export.xlsx')
     {
+        $this->spreadsheet = new Spreadsheet();
+        $this->sheet = $this->spreadsheet->getActiveSheet();
+        $this->fileName = $fileName;
+    }
 
-        // 创建一个新的 Spreadsheet 对象
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-
-        // 设置表头
-        foreach ($header as $k => $v) {
-            $sheet->setCellValue($k, $v);
+    public function setHeaders($headers)
+    {
+        $column = 'A';
+        foreach ($headers as $header) {
+            $this->sheet->setCellValue($column . '1', $header);
+            $column++;
         }
+        return $this;
+    }
 
-        // 填充数据到表格
-        $sheet->fromArray($data, null, "A2");
-
-        // 样式设置
-        $styleArray = [
-            'alignment' => [
-                'horizontal' => Alignment::HORIZONTAL_CENTER
-            ]
-        ];
-        $sheet->getStyle('A:Z')->applyFromArray($styleArray);
-        $sheet->getDefaultColumnDimension()->setWidth(30);
-
-        // 设置下载与后缀
-        if ($type) {
-            $type = "Xlsx";
-        } else {
-            $type = "Xlsx";
+    public function addRows($rows)
+    {
+        $row = 2;
+        foreach ($rows as $dataRow) {
+            $column = 'A';
+            foreach ($dataRow as $cellValue) {
+                $this->sheet->setCellValue($column . $row, $cellValue);
+                $column++;
+            }
+            $row++;
         }
+        return $this;
+    }
 
-        // 设置响应头
-        ob_end_clean();//清除缓存区
-        header('pragma:public');
-        header("Content-type:application/vnd.ms-excel;charset=utf-8");
-        header("Content-Disposition:attachment");
+    public function exportData()
+    {
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment;filename="' . $this->fileName . '"');
+        header('Cache-Control: max-age=0');
 
-        // 调用方法执行下载
-        $writer = IOFactory::createWriter($spreadsheet, $type);
-        // 数据流
-        $writer->save("php://output");
-
+        $writer = new Xlsx($this->spreadsheet);
+        $writer->save('php://output');
     }
 
 }

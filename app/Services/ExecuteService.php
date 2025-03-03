@@ -21,30 +21,6 @@ class ExecuteService
         if (!$model->save()) throw new Exception('insert fail');
     }
 
-//    public function prepareCheck(string $select_sql, string $user): string
-//    {
-//        if (!str_starts_with($select_sql, 'select ')) return 'Only SELECT is allowed';
-//
-//        try {
-//
-//            DB::connection()->getPdo()->prepare($select_sql);
-//
-//        } catch (Exception $exception) {
-//
-//            $model = new SqlExecutionLogs();
-//            $model->user = $user;
-//            $model->created_at = date('Y-m-d H:i:s');
-//            $model->sql = $select_sql;
-//            $model->error = $exception->getMessage();
-//
-//            if (!$model->save()) throw new Exception('insert fail');
-//
-//            return $exception->getMessage();
-//        }
-//
-//        return '';
-//    }
-
     /**
      * @throws Exception
      */
@@ -53,39 +29,30 @@ class ExecuteService
         return collect(DB::select($select_sql))->forPage($page, 10);
     }
 
-    function getSheetHeader(): array
+    /**
+     * @throws Exception
+     */
+    public function export(string $select_sql)
     {
-        $header = [
+        $exporter = new ExportService('SqlLogs.xlsx');
+
+        $exporter->setHeaders([
             'ID',
             'user',
             'sql',
             'error',
             'create-time',
-        ];
-        $data = [];
-        array_reduce($header, function ($pre_define, $item) use (&$data) {
-            $data[$pre_define . '1'] = $item;
-            return ++$pre_define;
-        }, 'A');
+        ]);
 
-        return $data;
-    }
+        $exporter->addRows(collect(DB::select($select_sql))->map(fn($item) => [
+            'id' => $item->id,
+            'user' => $item->user,
+            'sql' => $item->sql,
+            'error' => $item->error,
+            'create_time' => $item->created_at,
+        ])->toArray());
 
-    /**
-     * @throws Exception
-     */
-    public function getExport(string $select_sql): array
-    {
-        return [
-            $this->getSheetHeader(),
-            collect(DB::select($select_sql))->map(fn($item) => [
-                'id' => $item->id,
-                'user' => $item->user,
-                'sql' => $item->sql,
-                'error' => $item->error,
-                'create_time' => $item->created_at,
-            ])->toArray(),
-        ];
+        $exporter->exportData();
     }
 
     public function exportJson(string $select_sql): Collection

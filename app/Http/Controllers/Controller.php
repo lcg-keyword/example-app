@@ -50,9 +50,7 @@ class Controller extends BaseController
             return view('operate', ['logs' => $msg]);
         }
 
-        [$header, $data] = $this->service->getExport($params['keyword'] ?? '');
-
-        $this->exportService->export($header, $data);
+        $this->service->export($params['keyword'] ?? '');
 
         return response('');
     }
