@@ -9,7 +9,8 @@ use PhpOffice\PhpSpreadsheet\Style\Alignment;
 class ExportService
 {
 
-    public function export($header, $data, $type = true, $filename = null){
+    public function export($header, $data, $type = true, $filename = null)
+    {
 
         // 创建一个新的 Spreadsheet 对象
         $spreadsheet = new Spreadsheet();

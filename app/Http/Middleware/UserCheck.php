@@ -11,7 +11,7 @@ class UserCheck
     /**
      * Handle an incoming request.
      *
-     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
+     * @param \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response) $next
      */
     public function handle(Request $request, Closure $next): Response
     {
@@ -19,8 +19,8 @@ class UserCheck
         $username = $request->session()->get('username');
         $password = $request->session()->get('password');
 
-        if ('admin' != $username) return redirect()->route('home',['error' => 'The page is not accessible to regular users']);
-        if ('admin' != $password) return redirect()->route('home',['error' => 'Incorrect password']);
+        if ('admin' != $username) return redirect()->route('home', ['error' => 'The page is not accessible to regular users']);
+        if ('admin' != $password) return redirect()->route('home', ['error' => 'Incorrect password']);
 
         return $next($request);
     }
