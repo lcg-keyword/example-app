@@ -46,29 +46,29 @@
                 </tbody>
             </table>
         @endif
-{{--        {{ $pagers->links() }}--}}
+        {{--        {{ $pagers->links() }}--}}
 
-            @if ($pagers->lastPage() > 1)
-                <ul class="pagination">
-                    @if ($pagers->onFirstPage())
-                        <li class="disabled"><span>&laquo; 上一页</span></li>
-                    @else
-                        <li><a href="{{ $pagers->previousPageUrl() }}">&laquo; 上一页</a></li>
-                    @endif
+        @if ($pagers->lastPage() > 1)
+            <ul class="pagination">
+                @if ($pagers->onFirstPage())
+                    <li class="disabled"><span>&laquo; 上一页</span></li>
+                @else
+                    <li><a href="{{ $pagers->previousPageUrl() }}">&laquo; 上一页</a></li>
+                @endif
 
-                    @for ($i = 1; $i <= $pagers->lastPage(); $i++)
-                        <li class="{{ ($pagers->currentPage() == $i) ? ' active' : '' }}">
-                            <a href="{{ $pagers->url($i) }}">{{ $i }}</a>
-                        </li>
-                    @endfor
+                @for ($i = 1; $i <= $pagers->lastPage(); $i++)
+                    <li class="{{ ($pagers->currentPage() == $i) ? ' active' : '' }}">
+                        <a href="{{ $pagers->url($i) }}">{{ $i }}</a>
+                    </li>
+                @endfor
 
-                    @if ($pagers->hasMorePages())
-                        <li><a href="{{ $pagers->nextPageUrl() }}">下一页 &raquo;</a></li>
-                    @else
-                        <li class="disabled"><span>下一页 &raquo;</span></li>
-                    @endif
-                </ul>
-            @endif
+                @if ($pagers->hasMorePages())
+                    <li><a href="{{ $pagers->nextPageUrl() }}">下一页 &raquo;</a></li>
+                @else
+                    <li class="disabled"><span>下一页 &raquo;</span></li>
+                @endif
+            </ul>
+        @endif
 
     @elseif(isset($logs) && is_string($logs))
         <p class="text-danger">{{$logs}}</p>
@@ -77,17 +77,17 @@
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
-    $(document).ready(function() {
-        $('#export-excel').on('click', function(e) {
+    $(document).ready(function () {
+        $('#export-excel').on('click', function (e) {
             e.preventDefault();
             // 调用接口进行数据导出
             param = $('#textInput').val();
-            window.location.href = "{{ route('export.excel') }}"+'?keyword='+param;
+            window.location.href = "{{ route('export.excel') }}" + '?keyword=' + param;
         });
-        $('#export-json').on('click', function(e) {
+        $('#export-json').on('click', function (e) {
             e.preventDefault();
             param = $('#textInput').val();
-            window.location.href = "{{ route('export.json') }}"+'?keyword='+param;
+            window.location.href = "{{ route('export.json') }}" + '?keyword=' + param;
         });
     });
 </script>

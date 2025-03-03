@@ -4,13 +4,12 @@ namespace App\Services;
 
 use App\Models\SqlExecutionLogs;
 use Exception;
-use Illuminate\Database\QueryException;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
 class ExecuteService
 {
+
 
     public function prepareCheck(string $select_sql, string $user): string
     {
@@ -22,7 +21,7 @@ class ExecuteService
 
             DB::connection()->getPdo()->prepare($select_sql);
 
-        }catch (Exception $exception) {
+        } catch (Exception $exception) {
 
             $model = new SqlExecutionLogs();
             $model->user = $user;
@@ -41,11 +40,11 @@ class ExecuteService
     /**
      * @throws Exception
      */
-    public function execute(array $params, string $user): Collection | string
+    public function execute(array $params, string $user): Collection|string
     {
         if ($msg = $this->prepareCheck($params['keyword'] ?? '', $user)) return $msg;
 
-        return SqlExecutionLogs::query()->forPage($params['page'] ?? 1,10)->get();
+        return SqlExecutionLogs::query()->forPage($params['page'] ?? 1, 10)->get();
     }
 
     function getSheetHeader(): array
@@ -69,7 +68,7 @@ class ExecuteService
     /**
      * @throws Exception
      */
-    public function getExport(string $select_sql, string $user): array | string
+    public function getExport(string $select_sql, string $user): array|string
     {
         if ($msg = $this->prepareCheck($select_sql, $user)) return $msg;
 

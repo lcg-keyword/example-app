@@ -16,7 +16,7 @@ class Controller extends BaseController
 
     public function __construct(
         private ExecuteService $service,
-        private ExportService $exportService
+        private ExportService  $exportService
     )
     {
     }
@@ -30,16 +30,16 @@ class Controller extends BaseController
 
         $pagers = SqlExecutionLogs::query()->paginate(10);
 
-        return view('operate',['logs' => $logs,'pagers' => $pagers]);
+        return view('operate', ['logs' => $logs, 'pagers' => $pagers]);
     }
 
     public function exportExcel(Request $request)
     {
-        $select_sql = $request->input('keyword','');
+        $select_sql = $request->input('keyword', '');
 
         $result = $this->service->getExport($select_sql, $request->session()->get('username'));
 
-        if (is_string($result)) return view('operate',['logs' => $result]);
+        if (is_string($result)) return view('operate', ['logs' => $result]);
 
         $this->exportService->export($result['header'], $result['data']);
 
@@ -48,11 +48,11 @@ class Controller extends BaseController
 
     public function exportJson(Request $request)
     {
-        $select_sql = $request->input('keyword','');
+        $select_sql = $request->input('keyword', '');
 
         $result = $this->service->prepareCheck($select_sql, $request->session()->get('username'));
 
-        if ($result) return view('operate',['logs' => $result]);
+        if ($result) return view('operate', ['logs' => $result]);
 
         $jsonContent = json_encode($result, JSON_PRETTY_PRINT);
 
