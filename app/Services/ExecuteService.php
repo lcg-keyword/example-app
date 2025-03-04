@@ -58,13 +58,7 @@ class ExecuteService
 
     public function export2(string $select_sql, $file_name)
     {
-        $data = collect(DB::select($select_sql))->map(fn($item) => [
-            'id' => $item->id,
-            'user' => $item->user,
-            'sql' => $item->sql,
-            'error' => $item->error,
-            'create_time' => $item->created_at,
-        ])->toArray();
+        $collect = collect(DB::select($select_sql));
 
         if ('xlsx' === substr(strrchr($file_name,'.'),1)) {
             $exporter = new ExcelExporter($file_name);
@@ -77,13 +71,19 @@ class ExecuteService
                 'create-time',
             ]);
 
-            $exporter->export($data);
+            $exporter->export($collect->map(fn($item) => [
+                'id' => $item->id,
+                'user' => $item->user,
+                'sql' => $item->sql,
+                'error' => $item->error,
+                'create_time' => $item->created_at,
+            ])->toArray());
         }
 
         if ('json' === substr(strrchr($file_name,'.'),1)) {
             $exporter = new JsonExporter($file_name);
 
-            $exporter->export($data);
+            $exporter->export($collect);
         }
     }
 }
