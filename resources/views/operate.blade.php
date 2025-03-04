@@ -9,7 +9,7 @@
 <body>
 <div class="container mt-5">
 
-    <form action="{{ url('execute') }}" method="get">
+    <form id="myForm" action="{{ url('execute') }}" method="get">
         @csrf
         <div class="input-group mb-3">
             <input id="textInput" type="text" class="form-control" name="keyword" placeholder="input SQL"
@@ -78,16 +78,26 @@
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     $(document).ready(function () {
+        $('#myForm').on('submit', function (e) {
+            textInput = $('#textInput').val().trim();
+            if (textInput === '') {
+                e.preventDefault();
+            }
+        });
         $('#export-excel').on('click', function (e) {
             e.preventDefault();
             // 调用接口进行数据导出
-            param = $('#textInput').val();
-            window.location.href = "{{ route('export.excel') }}" + '?keyword=' + param;
+            param = $('#textInput').val().trim();
+            if (param !== '') {
+                window.location.href = "{{ route('export.excel') }}" + '?keyword=' + param;
+            }
         });
         $('#export-json').on('click', function (e) {
             e.preventDefault();
-            param = $('#textInput').val();
-            window.location.href = "{{ route('export.json') }}" + '?keyword=' + param;
+            param = $('#textInput').val().trim();
+            if (param !== '') {
+                window.location.href = "{{ route('export.json') }}" + '?keyword=' + param;
+            }
         });
     });
 </script>

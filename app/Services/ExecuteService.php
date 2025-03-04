@@ -21,17 +21,11 @@ class ExecuteService
         if (!$model->save()) throw new Exception('insert fail');
     }
 
-    /**
-     * @throws Exception
-     */
     public function execute(string $select_sql, int $page): Collection
     {
         return collect(DB::select($select_sql))->forPage($page, 10);
     }
 
-    /**
-     * @throws Exception
-     */
     public function export(string $select_sql)
     {
         $exporter = new ExportService('SqlLogs.xlsx');
