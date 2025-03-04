@@ -30,6 +30,7 @@
                 <tr>
                     <th>ID</th>
                     <th>user</th>
+                    <th>sql</th>
                     <th>error</th>
                     <th>create-time</th>
                 </tr>
@@ -39,6 +40,7 @@
                     <tr>
                         <td>{{ $product->id }}</td>
                         <td>{{ $product->user }}</td>
+                        <td>{{ $product->sql }}</td>
                         <td>{{ $product->error }}</td>
                         <td>{{ $product->created_at }}</td>
                     </tr>
@@ -80,6 +82,11 @@
     $(document).ready(function () {
         $('#myForm').on('submit', function (e) {
             textInput = $('#textInput').val().trim();
+            if (!textInput.toLowerCase().startsWith("select ")){
+                alert("Only SELECT is allowed");
+                e.preventDefault();
+                return;
+            }
             if (textInput === '') {
                 e.preventDefault();
             }
@@ -88,6 +95,10 @@
             e.preventDefault();
             // 调用接口进行数据导出
             param = $('#textInput').val().trim();
+            if (!param.toLowerCase().startsWith("select ")){
+                alert("Only SELECT is allowed");
+                return;
+            }
             if (param !== '') {
                 window.location.href = "{{ route('export.excel') }}" + '?keyword=' + param;
             }
@@ -95,6 +106,10 @@
         $('#export-json').on('click', function (e) {
             e.preventDefault();
             param = $('#textInput').val().trim();
+            if (!param.toLowerCase().startsWith("select ")){
+                alert("Only SELECT is allowed");
+                return;
+            }
             if (param !== '') {
                 window.location.href = "{{ route('export.json') }}" + '?keyword=' + param;
             }
