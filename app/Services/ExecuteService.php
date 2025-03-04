@@ -2,6 +2,7 @@
 
 namespace App\Services;
 
+use App\Exceptions\CustomerException;
 use App\Models\SqlExecutionLogs;
 use Exception;
 use Illuminate\Support\Collection;
@@ -18,7 +19,7 @@ class ExecuteService
         $model->sql = $select_sql;
         $model->error = $msg;
 
-        if (!$model->save()) throw new Exception('insert fail');
+        if (!$model->save()) throw new CustomerException('insert fail');
     }
 
     public function execute(string $select_sql, int $page): Collection
