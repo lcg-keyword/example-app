@@ -28,39 +28,11 @@ class ExecuteService
         return collect(DB::select($select_sql))->forPage($page, 10);
     }
 
-    public function export(string $select_sql)
-    {
-        $exporter = new ExportService('SqlLogs.xlsx');
-
-        $exporter->setHeaders([
-            'ID',
-            'user',
-            'sql',
-            'error',
-            'create-time',
-        ]);
-
-        $exporter->addRows(collect(DB::select($select_sql))->map(fn($item) => [
-            'id' => $item->id,
-            'user' => $item->user,
-            'sql' => $item->sql,
-            'error' => $item->error,
-            'create_time' => $item->created_at,
-        ])->toArray());
-
-        $exporter->exportData();
-    }
-
-    public function exportJson(string $select_sql): Collection
-    {
-        return collect(DB::select($select_sql));
-    }
-
-    public function export2(string $select_sql, $file_name)
+    public function export(string $select_sql, $file_name)
     {
         $collect = collect(DB::select($select_sql));
 
-        if ('xlsx' === substr(strrchr($file_name,'.'),1)) {
+        if ('xlsx' === substr(strrchr($file_name, '.'), 1)) {
             $exporter = new ExcelExporter($file_name);
 
             $exporter->setHeaders([
@@ -80,7 +52,7 @@ class ExecuteService
             ])->toArray());
         }
 
-        if ('json' === substr(strrchr($file_name,'.'),1)) {
+        if ('json' === substr(strrchr($file_name, '.'), 1)) {
             $exporter = new JsonExporter($file_name);
 
             $exporter->export($collect);
