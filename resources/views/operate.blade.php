@@ -82,12 +82,13 @@
     $(document).ready(function () {
         $('#myForm').on('submit', function (e) {
             textInput = $('#textInput').val().trim();
-            if (!textInput.toLowerCase().startsWith("select ")){
-                alert("Only SELECT is allowed");
+            if ('' === textInput) {
                 e.preventDefault();
                 return;
             }
-            if (textInput === '') {
+
+            if (!textInput.toLowerCase().startsWith("select ")) {
+                alert("Only SELECT is allowed");
                 e.preventDefault();
             }
         });
@@ -95,24 +96,27 @@
             e.preventDefault();
             // 调用接口进行数据导出
             param = $('#textInput').val().trim();
-            if (!param.toLowerCase().startsWith("select ")){
+            if ('' === param) return;
+
+            if (!param.toLowerCase().startsWith("select ")) {
                 alert("Only SELECT is allowed");
                 return;
             }
-            if (param !== '') {
-                window.location.href = "{{ route('export.excel') }}" + '?keyword=' + param;
-            }
+
+            window.location.href = "{{ route('export.excel') }}" + '?keyword=' + param;
         });
         $('#export-json').on('click', function (e) {
             e.preventDefault();
             param = $('#textInput').val().trim();
-            if (!param.toLowerCase().startsWith("select ")){
+
+            if ('' === param) return;
+
+            if (!param.toLowerCase().startsWith("select ")) {
                 alert("Only SELECT is allowed");
                 return;
             }
-            if (param !== '') {
-                window.location.href = "{{ route('export.json') }}" + '?keyword=' + param;
-            }
+
+            window.location.href = "{{ route('export.json') }}" + '?keyword=' + param;
         });
     });
 </script>
