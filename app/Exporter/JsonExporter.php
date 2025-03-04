@@ -17,7 +17,7 @@ class JsonExporter extends Exporter
         $jsonData = json_encode($data, JSON_PRETTY_PRINT);
 
         header('Content-Type: application/json');
-        header('Content-Disposition: attachment;filename="'.$this->fileName.'.json"');
+        header('Content-Disposition: attachment;filename="'.$this->fileName);
 
         echo $jsonData;
     }
