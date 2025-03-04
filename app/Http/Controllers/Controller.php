@@ -28,11 +28,11 @@ class Controller extends BaseController
 
         $params = $request->all();
 
-        if ($msg = $this->sqlValidator->validateSelectSql($params['keyword'] ?? '')) {
-            $this->service->addLog($params['keyword'] ?? '', $msg, $request->session()->get('username'));
-        } else {
-            $logs = $this->service->execute($params['keyword'] ?? '', $params['page'] ?? 1);
-        }
+        $msg = $this->sqlValidator->validateSelectSql($params['keyword'] ?? '');
+
+        $this->service->addLog($params['keyword'] ?? '', $msg, $request->session()->get('username'));
+
+        if (!$msg) $logs = $this->service->execute($params['keyword'] ?? '', $params['page'] ?? 1);
 
         return view('operate', [
             'logs' => $logs ?? $msg,
@@ -45,10 +45,11 @@ class Controller extends BaseController
     {
         $params = $request->all();
 
-        if ($msg = $this->sqlValidator->validateSelectSql($params['keyword'] ?? '')) {
-            $this->service->addLog($params['keyword'] ?? '', $msg, $request->session()->get('username'));
-            return view('operate', ['logs' => $msg]);
-        }
+        $msg = $this->sqlValidator->validateSelectSql($params['keyword'] ?? '');
+
+        $this->service->addLog($params['keyword'] ?? '', $msg, $request->session()->get('username'));
+
+        if ($msg) return view('operate', ['logs' => $msg]);
 
         $this->service->export($params['keyword'] ?? '', 'SqlLogs.xlsx');
 
@@ -59,10 +60,11 @@ class Controller extends BaseController
     {
         $params = $request->all();
 
-        if ($msg = $this->sqlValidator->validateSelectSql($params['keyword'] ?? '')) {
-            $this->service->addLog($params['keyword'] ?? '', $msg, $request->session()->get('username'));
-            return view('operate', ['logs' => $msg]);
-        }
+        $msg = $this->sqlValidator->validateSelectSql($params['keyword'] ?? '');
+
+        $this->service->addLog($params['keyword'] ?? '', $msg, $request->session()->get('username'));
+
+        if ($msg) return view('operate', ['logs' => $msg]);
 
         $this->service->export($params['keyword'] ?? '', 'SqlLogs.json');
 
