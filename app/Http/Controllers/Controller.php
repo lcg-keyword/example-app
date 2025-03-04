@@ -28,14 +28,14 @@ class Controller extends BaseController
 
         $params = $request->all();
 
-        $msg = $this->sqlValidator->validateSelectSql($params['keyword'] ?? '');
+        if (empty($params['page'])) $msg = $this->sqlValidator->validateSelectSql($params['keyword'] ?? '');
 
-        $this->service->addLog($params['keyword'] ?? '', $msg, $request->session()->get('username'));
+        if (empty($params['page'])) $this->service->addLog($params['keyword'] ?? '', $msg, $request->session()->get('username'));
 
-        if (!$msg) $logs = $this->service->execute($params['keyword'] ?? '', $params['page'] ?? 1);
+        if (!($msg ?? '')) $logs = $this->service->execute($params['keyword'] ?? '', $params['page'] ?? 1);
 
         return view('operate', [
-            'logs' => $logs ?? $msg,
+            'logs' => $logs ?? ($msg ?? ''),
             'pagers' => SqlExecutionLogs::query()->paginate(10),
             'keyword' => $params['keyword'] ?? ''
         ]);

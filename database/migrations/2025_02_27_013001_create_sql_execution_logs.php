@@ -12,10 +12,11 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('sql_execution_logs', function (Blueprint $table) {
+            $table->engine = 'InnoDB';
             $table->id();
             $table->string('user');
             $table->timestamps();
-            $table->string('sql');
+            $table->text('sql')->nullable();
             $table->text('error')->nullable();
         });
     }
