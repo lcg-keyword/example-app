@@ -7,8 +7,18 @@ use App\Abstracts\Exporter;
 class JsonExporter extends Exporter
 {
 
-    public function export($filename)
+    public function __construct($fileName)
     {
-        // TODO: Implement export() method.
+        parent::__construct($fileName);
+    }
+
+    public function export($data)
+    {
+        $jsonData = json_encode($data, JSON_PRETTY_PRINT);
+
+        header('Content-Type: application/json');
+        header('Content-Disposition: attachment;filename="'.$this->fileName.'.json"');
+
+        echo $jsonData;
     }
 }

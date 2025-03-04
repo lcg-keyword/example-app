@@ -4,12 +4,12 @@ namespace App\Abstracts;
 
 abstract class Exporter
 {
-    protected $data;
+    protected $fileName;
 
-    public function __construct($data)
+    public function __construct($fileName)
     {
-        $this->data = $data;
+        $this->fileName = $fileName;
     }
 
-    abstract public function export($filename);
+    abstract public function export($data);
 }

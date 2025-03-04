@@ -50,9 +50,10 @@ class Controller extends BaseController
             return view('operate', ['logs' => $msg]);
         }
 
-        $this->service->export($params['keyword'] ?? '');
+        $this->service->export($params['keyword'] ?? '', 'SqlLogs.xlsx');
+//        $this->service->export2($params['keyword'] ?? '', 'SqlLogs.xlsx');
 
-        return response('');
+        return response();
     }
 
     public function exportJson(Request $request)
@@ -64,12 +65,8 @@ class Controller extends BaseController
             return view('operate', ['logs' => $msg]);
         }
 
-        $result = $this->service->exportJson($params['keyword'] ?? '');
+        $this->service->export2($params['keyword'] ?? '', 'SqlLogs.json');
 
-        return response()->streamDownload(function () use ($result) {
-            echo json_encode($result, JSON_PRETTY_PRINT);
-        }, 'sql_logs.json', [
-            'Content-Type' => 'application/json'
-        ]);
+        return response();
     }
 }

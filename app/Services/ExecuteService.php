@@ -3,8 +3,9 @@
 namespace App\Services;
 
 use App\Exceptions\CustomerException;
+use App\Exporter\ExcelExporter;
+use App\Exporter\JsonExporter;
 use App\Models\SqlExecutionLogs;
-use Exception;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
 
@@ -53,5 +54,36 @@ class ExecuteService
     public function exportJson(string $select_sql): Collection
     {
         return collect(DB::select($select_sql));
+    }
+
+    public function export2(string $select_sql, $file_name)
+    {
+        $data = collect(DB::select($select_sql))->map(fn($item) => [
+            'id' => $item->id,
+            'user' => $item->user,
+            'sql' => $item->sql,
+            'error' => $item->error,
+            'create_time' => $item->created_at,
+        ])->toArray();
+
+        if ('xlsx' === substr(strrchr($file_name,'.'),1)) {
+            $exporter = new ExcelExporter($file_name);
+
+            $exporter->setHeaders([
+                'ID',
+                'user',
+                'sql',
+                'error',
+                'create-time',
+            ]);
+
+            $exporter->export($data);
+        }
+
+        if ('json' === substr(strrchr($file_name,'.'),1)) {
+            $exporter = new JsonExporter($file_name);
+
+            $exporter->export($data);
+        }
     }
 }
