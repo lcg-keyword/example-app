@@ -69,7 +69,7 @@ class Controller extends BaseController
 //
 //        return response();
 
-//        $result = $this->service->exportJson($params['keyword'] ?? '');
+        $result = $this->service->exportJson($params['keyword'] ?? '');
 
         return response()->streamDownload(function () use ($result) {
             echo json_encode($result, JSON_PRETTY_PRINT);
