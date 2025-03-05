@@ -7,7 +7,7 @@
 </head>
 <body>
 <div class="login-container">
-    {{$error}}
+    <div style="color: red">{{$error}}</div>
 </div>
 </body>
 </html>
