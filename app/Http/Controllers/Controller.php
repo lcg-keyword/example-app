@@ -5,15 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\SqlExecutionLogs;
 use App\Services\ExecuteService;
 use App\Validators\SqlValidator;
-use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
-use Illuminate\Foundation\Validation\ValidatesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 
 class Controller extends BaseController
 {
-    use AuthorizesRequests, ValidatesRequests;
-
     public function __construct(
         private ExecuteService $service,
         private SqlValidator   $sqlValidator
