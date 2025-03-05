@@ -62,16 +62,12 @@
     @if ($error)
         <div class="error">
             <ul>
-                {{--                @foreach ($errors->all() as $error)--}}
                 <li>{{ $error }}</li>
-                {{--                @endforeach--}}
             </ul>
         </div>
     @endif
-    {{--    <form action="{{ route('dev') }}" method="post">--}}
     <form action="{{ url('/login') }}" method="post">
         @csrf
-        {{--        <input type="email" name="email" placeholder="Email" required>--}}
         <input type="username" name="username" placeholder="username" required>
         <input type="password" name="password" placeholder="Password" required>
         <button type="submit">Login</button>

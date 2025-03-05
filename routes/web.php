@@ -30,18 +30,15 @@ Route::post('/login', function (Request $request) {
     return redirect('/dev');
 });
 
-Route::group([], function () {
-    Route::get('/dev', function () {
+Route::get('/dev', function () {
 
-        return view('operate');
+    return view('operate');
 
-    })->middleware([UserCheck::class]);
+})->middleware([UserCheck::class]);
 
-    Route::get('/execute', [Controller::class, 'execute'])->middleware([UserCheck::class]);
+Route::get('/execute', [Controller::class, 'execute'])->middleware([UserCheck::class]);
 
-    Route::get('/export/excel', [Controller::class, 'exportExcel'])->name('export.excel')->middleware([UserCheck::class]);
+Route::get('/export/excel', [Controller::class, 'exportExcel'])->name('export.excel')->middleware([UserCheck::class]);
 
-    Route::get('/export/json', [Controller::class, 'exportJson'])->name('export.json')->middleware([UserCheck::class]);
-
-});
+Route::get('/export/json', [Controller::class, 'exportJson'])->name('export.json')->middleware([UserCheck::class]);
 

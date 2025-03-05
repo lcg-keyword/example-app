@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\SqlExecutionLogs;
 use App\Services\ExecuteService;
-use App\Services\ExportService;
 use App\Validators\SqlValidator;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -17,7 +16,6 @@ class Controller extends BaseController
 
     public function __construct(
         private ExecuteService $service,
-        private ExportService  $exportService,
         private SqlValidator   $sqlValidator
     )
     {
